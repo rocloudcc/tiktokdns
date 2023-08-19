@@ -30,7 +30,7 @@ update_resolv_conf() {
     sudo mv /etc/resolv.conf.new /etc/resolv.conf
 }
 
-# 重启 NetworkManager 以使更改生效
+# 重启 NetworkManager
 restart_network_manager() {
     sudo systemctl restart NetworkManager
 }
@@ -56,4 +56,4 @@ main() {
 }
 
 # 执行主函数
-main 
+main
