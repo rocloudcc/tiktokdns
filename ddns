@@ -21,13 +21,13 @@ dns_servers=(
     # ... 添加其他国家的DNS服务器
 )
 
-# 修改 /etc/resolv.conf
-update_resolv_conf() {
+# 修改 /etc/sysconfig/network-scripts/ifcfg-eth0
+update_ifcfg-eth0_conf() {
     echo -e "\033[1;34m执行任务：修改 /etc/resolv.conf\033[0m"
     for dns_server in ${dns_servers[$country]}; do
-        echo "nameserver $dns_server" | sudo tee /etc/resolv.conf.new
+        echo "nameserver $dns_server" | sudo tee /etc/sysconfig/network-scripts/ifcfg-eth0.new
     done
-    sudo mv /etc/resolv.conf.new /etc/resolv.conf
+    sudo mv /etc/sysconfig/network-scripts/ifcfg-eth0.new /etc/sysconfig/network-scripts/ifcfg-eth0
 }
 
 # 重启 NetworkManager
