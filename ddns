@@ -21,13 +21,14 @@ dns_servers=(
     # ... 添加其他国家的DNS服务器
 )
 
-# 修改 /etc/sysconfig/network-scripts/ifcfg-eth0
-update_ifcfg-eth0_conf() {
-    echo -e "\033[1;34m执行任务：修改 /etc/resolv.conf\033[0m"
-    for dns_server in ${dns_servers[$country]}; do
-        echo "nameserver $dns_server" | sudo tee /etc/sysconfig/network-scripts/ifcfg-eth0.new
+# 修改网络配置文件
+update_network_config() {
+    local interface_name="$1"
+    local dns_server_list="${dns_servers[$country]}"
+    echo -e "\033[1;34m执行任务：修改 /etc/sysconfig/network-scripts/ifcfg-$interface_name\033[0m"
+    for dns_server in $dns_server_list; do
+        echo "DNS$((++i))=$dns_server" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-$interface_name > /dev/null
     done
-    sudo mv /etc/sysconfig/network-scripts/ifcfg-eth0.new /etc/sysconfig/network-scripts/ifcfg-eth0
 }
 
 # 重启 NetworkManager
@@ -39,7 +40,7 @@ restart_network_manager() {
 main() {
     case $country in
         "PH"|"VN"|"MY"|"TH"|"ID"|"TW"|"CN"|"HK"|"JP"|"US"|"DE")
-            update_resolv_conf
+            update_network_config "eth0" # 更改为您的网络接口名称
             restart_network_manager
             echo -e "\033[1;32m修改DNS成功，已重启NetworkManager。\033[0m"
             echo -e "\n\n================================================\n"
