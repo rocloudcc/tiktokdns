@@ -26,9 +26,12 @@ update_network_config() {
     local interface_name="$1"
     local dns_server_list="${dns_servers[$country]}"
     echo -e "\033[1;34m执行任务：修改 /etc/sysconfig/network-scripts/ifcfg-$interface_name\033[0m"
-    for dns_server in $dns_server_list; do
-        echo "DNS$((++i))=$dns_server" | sudo tee -a /etc/sysconfig/network-scripts/ifcfg-$interface_name > /dev/null
-    done
+    # 解析 DNS1 和 DNS2
+    local dns1=$(echo $dns_server_list | cut -d ' ' -f 1)
+    local dns2=$(echo $dns_server_list | cut -d ' ' -f 2)
+    # 更新 DNS1 和 DNS2
+    sudo sed -i "s/^DNS1=.*/DNS1=$dns1/" /etc/sysconfig/network-scripts/ifcfg-$interface_name
+    sudo sed -i "s/^DNS2=.*/DNS2=$dns2/" /etc/sysconfig/network-scripts/ifcfg-$interface_name
 }
 
 # 重启 NetworkManager
